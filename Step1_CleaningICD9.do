@@ -108,7 +108,7 @@ label define cause
 5 "All other cancers" /* B08, B09, B100, B109, B11, B12, B13, B14, B15, B16, B17 */
 6 "Nervous system" /* B22 */
 7 "Metabolic" /* B180, B181, B182-B183, B189, B19 *///what was removed here?
-8 "Cardiovascular disease" /* B25, B260, B27, B28, B29, B30 */
+8 "Cardiovascular disease" /* B25-B30 */
 9 "Suicide" /* B54 */
 10 "Homicide" /* B55 */
 11 "Transport accidents" /* B47 */
@@ -125,7 +125,7 @@ replace cause_new = 4 if cause=="B101"
 replace cause_new = 5 if regexm(cause, "^B08$") | regexm(cause, "^B09$") | regexm(cause, "^B10[09]") | regexm(cause, "^B1[1-7]$")
 replace cause_new = 6 if cause=="B22"
 replace cause_new = 7 if regexm(cause, "^B18[01239]$") | cause=="B19"
-replace cause_new = 8 if regexm(cause, "B2[5789]$") | cause=="B260" | cause=="B30"
+replace cause_new = 8 if regexm(cause, "B2[5-9]$") | cause=="B30"
 replace cause_new = 9 if cause=="B54"
 replace cause_new = 10 if cause=="B55"
 replace cause_new = 11 if cause=="B47"
