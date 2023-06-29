@@ -126,7 +126,7 @@ label define cause
 5 "All other cancers" /* C00-D48, excluding C33-C34 */
 6 "Nervous system" /* G00-G98 */
 7 "Metabolic" /* E00-E88 */
-8 "Cardiovascular disease" /* I00-I09, I11, I16-I19, I20-I99 */
+8 "Cardiovascular disease" /* I00-I99 */
 9 "Suicide" /* X60–X84, Y87.0 */
 10 "Drug poisoning" /* F11-16, F18-19, X40–X44, X85, Y10–Y14 */
 11 "Alcohol-induced" /* K70, K73-74, F10, X45, Y15 */
@@ -145,7 +145,7 @@ replace cause_new = 4 if regexm(cause, "^C3[34]")
 replace cause_new = 5 if cause_new==. & (regexm(cause, "^C[0-9]") | regexm(cause, "^D[0-4]")) // liver cancer C22 included 
 replace cause_new = 6 if regexm(cause, "^G[0-9]")
 replace cause_new = 7 if regexm(cause, "^E")
-replace cause_new = 8 if regexm(cause, "^I0") | regexm(cause, "^I1[16-9]") | regexm(cause, "^I[2-9]") 
+replace cause_new = 8 if regexm(cause, "^I[0-9]")
 replace cause_new = 9 if regexm(cause, "^X[67]") | regexm(cause, "^X8[0-4]") | cause=="Y870"
 replace cause_new = 10 if regexm(cause, "^F1[1-689]") | regexm(cause, "^X4[0-4]") | regexm(cause, "^X85") | regexm(cause, "^Y1[0-4]")
 replace cause_new = 11 if regexm(cause, "^K7[034]") | regexm(cause, "^F10") | regexm(cause, "^X45") | regexm(cause, "^Y15")
@@ -167,11 +167,11 @@ label define cause2
 5 "All other cancers" /* C00-D48, excluding C33-C34 */
 6 "Nervous system" /* G00-G98 */
 7 "Metabolic" /* E00-E88 */
-8 "Cardiovascular disease" /* I00-I09, I11, I16-I19, I20-I99 */
+8 "Cardiovascular disease" /* I00-I99 */
 9 "Suicide" /* X60–X84, Y87.0 */
 10 "Homicide" /* X86-X99, Y00-Y09, Y87.1 */
 11 "Transport accidents" /* V01–V99, Y85 */
-12 "Other external causes of death" //this category now includes drugs and alcohol --not sure if Jenn wants that
+12 "Other external causes of death" //this category now includes drugs and alcohol
 13 "All other causes" 
 99 "All causes combined" ;  
 #delimit cr
@@ -180,12 +180,7 @@ label values cause_new2 cause2
 replace cause_new2 = cause_new if cause_new<=9 // the first 9 causes (up to suicide) are the same
 replace cause_new2 = 10 if cause_new==12 // homicide
 replace cause_new2 = 11 if cause_new==13 // transport accidents
-replace cause_new2 = 12 if inlist(cause_new, 14) 
-***replace cause_new2 = 12 if inlist(cause_new, 10, 11, 14) // drug poisoning + alcohol-induced + external causes except suicide, homicide & transport accidents
-/* @ Kasia: the current code includes alcohol and drug related deaths to "other 
-external causes of death". Just wondering, do you think they're better placed as
-"all other causes" or "other external causes of death" (provided we decide not
- to exclude them)? */
+replace cause_new2 = 12 if inlist(cause_new, 10, 11, 14) // drug poisoning + alcohol-induced + external causes except suicide, homicide & transport accidents
 replace cause_new2 = 13 if cause_new==15 // all other causes
 replace cause_new2 = 99 if cause_new==99 // all causes combined
 
