@@ -25,11 +25,18 @@ raw <- read_dta(glue('{wd}/NEW_dat_icd910.dta'))
 # import 2013 European Standard Population (ESP) file
 esp <- read_dta(glue('{wd}/esp.dta'))
 
+dup <- function(dat){
+  dat_duplicated<-dat %>%
+    group_by_all() %>%
+    filter(n()>1) %>%
+    ungroup()
+  return(!nrow(dat_duplicated)==0)}
 
+dup(raw)
 
 # 2. Prepare data for plots ----------------------------------------------------
 # cleaning variables before collapsing
-dat <- raw %>% 
+dat_dup <- raw %>% 
   filter(age>=7, age<=14, cause<=99, sex!=9, year<2020) %>%
   arrange(country, year, sex, cause, age) %>%
   # merge in 2013 ESP
@@ -51,10 +58,8 @@ dat <- raw %>%
     country = factor(country, labels = country_label)
   )
 
-# dat_duplicated<-dat %>%
-#    group_by_all() %>%
-#  filter(n()>1) %>%
-#   ungroup()
+# get rid of duplicates due to missing values
+dat <- dat_dup[!duplicated(dat_dup), ]
 
 # country-specific mortality (moving average)
 midlife1 <- dat %>%
@@ -118,9 +123,6 @@ midlife<-midlife_tot %>%  group_by(age) %>%
       })
   })
 
-
-midlifeee<-midlife_tot%>%
-           filter((country=='HI' | country=='UK') & cause=='All Causes' & age=='25-44' & sex=='Female' & year>1995 & year<2000)
 
 #################################################################################################################
 #################################################################################################################
